@@ -1,0 +1,75 @@
+<nav class="navbar is-fixed-top pt-1 pb-1 is-transparent" style="backdrop-filter: blur(3px); background-color: rgba(255, 255, 255, 0.8); box-shadow: 2px 2px 10px -2px rgba(0,0,0,0.1);">
+  <div class="navbar-brand"><!-- left most branding part -->
+    <a class="navbar-item" href="/">
+      <h1 class="title is-4 has-text-dark" style="font-family: 'Josefin Sans'; font-weight: 500;"><span class="has-text-info">&lt;</span><span>snippetshare</span><span class="has-text-info">/&gt;</span></h1>
+    </a>
+    <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false">
+      <span aria-hidden="true"></span>
+      <span aria-hidden="true"></span>
+      <span aria-hidden="true"></span>
+    </a>
+  </div>
+  <div class="navbar-menu">
+    <div class="navbar-end">
+    <% if(currentUser) { %>
+        <div class="navbar-start has-text-light">
+          <a class="navbar-item" href="/">
+            Home
+          </a>
+          <a class="navbar-item" href="/explore">
+            Explore
+          </a>
+          <a class="navbar-item" href="/s/new">
+            New Snippet
+          </a>
+          <div class="navbar-item has-dropdown is-hoverable">
+            <a class="navbar-link" href="/u/<%=currentUser.username%>">
+              u/<%=currentUser.username%> 
+            </a>
+            <div class="navbar-dropdown is-boxed is-right">
+              <a class="navbar-item"  href="/u/<%=currentUser.username%>">
+                Your Profile
+              </a>
+              <a class="navbar-item"  href="/u/<%=currentUser.username%>/snippets">
+                Your Snippets
+              </a>
+              <hr class="navbar-divider">
+              <a class="navbar-item has-text-danger" href="/logout">
+                Log Out
+              </a>
+            </div>
+          </div>
+        </div>
+      <% }else{%>
+        <div class="navbar-start">
+          <a class="navbar-item" href="/">
+            Home
+          </a>
+          <a class="navbar-item" href="/explore">
+            Explore
+          </a>
+        </div>
+        <div class="navbar-item">
+          <div class="buttons">
+            <a class="button is-light is-normal" href="/login">
+              <strong>Log in</strong>
+            </a>
+            <a class="button is-dark is-normal" href="/signup">
+              <strong>Sign up</strong>
+            </a>
+          </div>
+        </div>
+      <%}%> 
+    </div>
+    
+  </div>
+</nav>
+<script>//dropdown classes add
+  const burger = document.querySelector('.navbar-burger')
+  const menu = document.querySelector('.navbar-menu')
+
+  burger.addEventListener('click', ()=>{
+    burger.classList.toggle('is-active')
+    menu.classList.toggle('is-active')
+  })
+</script>

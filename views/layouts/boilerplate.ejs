@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" href="/images/favicon.ico" type="image/x-icon">
+
+  <!--To Put Footer at the bottom-->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
+  <link rel="stylesheet" href="/codemirror/lib/codemirror.css">
+  <link rel="stylesheet" href="/codemirror/theme/monokai.css">
+  <link rel="stylesheet" href="/codemirror/theme/blackboard.css">
+  <link rel="stylesheet" href="/codemirror/theme/duotone-light.css">
+  <link rel="stylesheet" href="/codemirror/theme/duotone-dark.css">
+  <link rel="stylesheet" href="/stylesheets/editor.css">
+  <style type="text/css" media="screen">
+    body {
+      display: flex;
+      position: relative;
+      min-height: 100vh;
+      flex-direction: column;
+    }
+    #wrapper{
+      position: relative;
+      flex: 1;
+    }
+    .flash{
+      display: flex;
+      width: fit-content;
+      position: fixed;
+
+      justify-content: center;
+
+      z-index: 999;
+      top: 50px;
+      left: 0;
+      right: 0;
+      margin: auto;
+      opacity: 0.8;
+      transition: all 0.2s ease-in-out;
+    }
+  </style>
+  <title>SnippetShare</title>
+</head>
+<body class="has-navbar-fixed-top has-background-light">
+  <main id="wrapper" style="min-height: 100vh;">
+    <%- include('../partials/navbar.ejs')%>
+    <%- include('../partials/flash.ejs') %> 
+    <%- body %>
+  </main> 
+  <%- include('../partials/footer.ejs') %>
+  <script>
+    const flash = document.querySelector('.flash')
+    if(flash){
+      setTimeout(()=>{
+        flash.style.opacity = 0
+        flash.style.visibility = 'hidden'
+      }, 1500)
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" href="/images/favicon.ico" type="image/x-icon">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&display=swap" rel="stylesheet">
+  <title>SnippetShare</title>
+</head>
+<body>
+  <section class="hero is-light is-fullheight">
+    <div class="hero-head">
+      <nav class="navbar is-fixed-top pt-1 pb-1 is-transparent">
+        <div class="navbar-brand"><!-- left most branding part -->
+          <a class="navbar-item" href="/">
+            <h1 class="title is-4" style="font-family: 'Josefin Sans'; font-weight: 500;"><span class="has-text-info">&lt;</span><span>snippetshare</span><span class="has-text-info">/&gt;</span></h1>
+          </a>
+          <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navbarBasicExample">
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+          </a>
+        </div>
+        <div class="navbar-menu">
+          <div class="navbar-end">
+          <% if(currentUser) { %>
+              <div class="navbar-start">
+                <a class="navbar-item" href="/">
+                  Home
+                </a>
+                <a class="navbar-item" href="/explore">
+                  Explore
+                </a>
+                <a class="navbar-item" href="/s/new">
+                  New Snippet
+                </a>
+                <div class="navbar-item has-dropdown is-hoverable">
+                  <a class="navbar-link" href="/u/<%=currentUser.username%>">
+                    u/<%=currentUser.username%> 
+                  </a>
+                  <div class="navbar-dropdown is-boxed is-right">
+                    <a class="navbar-item" href="/u/<%=currentUser.username%>">
+                      Your Profile
+                    </a>
+                    <a class="navbar-item" href="/u/<%=currentUser.username%>/snippets">
+                      Your Snippets
+                    </a>
+                    <hr class="navbar-divider">
+                    <a class="navbar-item has-text-danger" href="/logout">
+                      Log Out
+                    </a>
+                  </div>
+                </div>
+              </div>
+            <% }else{%>
+              <div class="navbar-item">
+                <div class="buttons">
+                  <a class="button is-black is-light is-normal" href="/login">
+                    <strong>Log in</strong>
+                  </a>
+                  <a class="button is-dark is-normal" href="/signup">
+                    <strong>Sign up</strong>
+                  </a>
+                </div>
+              </div>
+            <%}%> 
+          </div>
+          
+        </div>
+      </nav>
+    </div>
+    <div class="hero-body pt-0">
+      <div class="container has-text-centered">
+        <p class="subtitle has-text-dark is-6">Welcome To</p>
+        <p class="title is-1 is-size-3-mobile" style="font-family: 'Josefin Sans'; font-weight: 500;">
+          <span class="has-text-info">&lt;</span>snippetshare<span class="has-text-info">/&gt;</span>
+        </p>
+        <p class="subtitle is-6 has-text-grey">
+          Create, save and share code snippets 😀
+        </p>
+        <div>
+          <!-- <a class="button is-light is-normal is-size-7-mobile" href="/home">
+            <strong>About Project</strong>
+          </a> -->
+          <a class="button is-dark is-normal is-size-7-mobile" href="/explore">
+            <strong>Explore Snippets</strong>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+</body>
+<script>//dropdown classes add
+  const burger = document.querySelector('.navbar-burger')
+  const menu = document.querySelector('.navbar-menu')
+
+  burger.addEventListener('click', ()=>{
+    burger.classList.toggle('is-active')
+    menu.classList.toggle('is-active')
+  })
+</script>
+</html>

@@ -1,0 +1,48 @@
+<% layout('./layouts/boilerplate.ejs') %>
+<form action="/s/new" method="POST">
+  <div class="container p-4 mt-4">
+    <div class="card">
+      <div class="card-header p-4 is-flex is-flex-direction-column">
+        <h1 class="title is-4">New Snippet</h1>
+        <input class="input mb-2" name="title" type="text" placeholder="Enter Snippet Title" value="Untitled Snippet" required>
+        <div class="is-flex is-align-items-center is-flex-wrap-wrap" style="gap: 6px;">
+          <div class="select">
+            <select name="theme" id="theme-selector">
+              <option value="monokai">monokai</option>
+              <option value="blackboard">blackboard</option>
+              <option value="duotone-light">duotone-light</option>
+              <option value="duotone-dark">duotone-dark</option>
+            </select>
+          </div>
+          <div class="select">
+            <select name="language" id="language-selector">
+              <option value="text/x-c++src">C++</option>
+              <option value="text/x-python">Python</option>
+              <option value="text/x-java">Java</option>
+              <option value="text/html">HTML</option>
+              <option value="text/css">CSS</option>
+              <option value="javascript">JavaScript</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div>
+        <textarea name="code" id="code-editor"></textarea>
+      </div>
+      <div class="card-footer p-2 is-flex is-justify-content-flex-end">
+        <button type="submit" class="button is-success is-light"><strong>Create</strong></button>
+      </div>
+    </div>
+  </div>
+</form>
+
+
+<script src="/codemirror/lib/codemirror.js"></script>
+<script src="/codemirror/mode/javascript/javascript.js"></script>
+<script src="/codemirror/mode/clike/clike.js"></script>
+<script src="/codemirror/mode/python/python.js"></script>
+<script src="/codemirror/mode/css/css.js"></script>
+<script src="/codemirror/mode/xml/xml.js"></script>
+<script src="/codemirror/mode/htmlmixed/htmlmixed.js"></script>
+<script src="/codemirror/addon/edit/closebrackets.js"></script>
+<script src="/javascripts/codemirror.js"></script>

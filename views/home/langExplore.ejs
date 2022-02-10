@@ -1,0 +1,197 @@
+<% layout('./layouts/boilerplate.ejs') %>
+<div class="container mt-6 p-4 is-flex is-justify-content-center" style="gap: 32px; width: 100%;">
+  <main id="snippetWrapper" class="is-flex is-flex-direction-column is-flex-grow-1" style="max-width: 720px;">
+    <div class="" style="width: 100%;">
+      <div class="card p-4" style="width: 100%;">
+        <div class="tags">
+          <strong class="tag is-info is-light">
+            <a class="has-text-info" href="/explore">All</a>
+          </strong>
+          <% if (lang==='cpp') { %>
+            <strong class="tag is-info">
+              <a class="has-text-light" href="/explore/cpp">C++</a>
+            </strong>
+          <% }else{%> 
+            <strong class="tag is-info is-light">
+              <a class="has-text-info" href="/explore/cpp">C++</a>
+            </strong>
+          <% } %> 
+          <% if(lang==='java') { %>
+            <strong class="tag is-info">
+              <a class="has-text-light" href="/explore/java">Java</a>
+            </strong>
+          <% }else{%>
+            <strong class="tag is-info is-light">
+              <a class="has-text-info" href="/explore/java">Java</a>
+            </strong>
+          <% } %> 
+          <% if(lang==='html') { %>
+            <strong class="tag is-info">
+              <a class="has-text-light" href="/explore/html">HTML</a>
+            </strong>
+          <% }else{%>
+            <strong class="tag is-info is-light">
+              <a class="has-text-info" href="/explore/html">HTML</a>
+            </strong>
+          <% } %> 
+          <% if(lang==='py') { %>
+            <strong class="tag is-info">
+              <a class="has-text-light" href="/explore/py">Python</a>
+            </strong>
+          <% }else{%>
+            <strong class="tag is-info is-light">
+              <a class="has-text-info" href="/explore/py">Python</a>
+            </strong>
+          <% } %> 
+          <% if(lang==='css') { %>
+            <strong class="tag is-info">
+              <a class="has-text-light" href="/explore/css">CSS</a>
+            </strong>
+          <% }else{%>
+            <strong class="tag is-info is-light">
+              <a class="has-text-info" href="/explore/css">CSS</a>
+            </strong>
+          <% } %> 
+          <% if(lang==='js') { %>
+            <strong class="tag is-info">
+              <a class="has-text-light" href="/explore/js">JavaScript</a>
+            </strong>
+          <% }else{%>
+            <strong class="tag is-info is-light">
+              <a class="has-text-info" href="/explore/js">JavaScript</a>
+            </strong>
+          <% } %> 
+        </div>
+      </div>
+    </div>
+    <div class="toObserve mt-5"><img src="/images/loader.svg"></div>
+  </main>
+
+  <aside class="is-flex is-flex-direction-column is-hidden-touch">
+    <aside class="card" style="width: 320px; height: fit-content;">
+      <div class="card-content">
+        <p class="title is-6 has-text-weight-medium">
+          Top Posts 🚀<span class="has-text-grey is-size-7 ml-2">30 days</span>
+        </p>
+        <hr>
+        <% for( let i = 0; i<topSnippets.length; i++) { %>
+          <% let snippet = topSnippets[i] %> 
+          <div class="is-flex is-justify-content-space-between is-align-items-center mb-3">
+            <% if(snippet.title.length>=27){ %>
+              <%snippet.title = snippet.title.slice(0, 27).concat('...')%>
+            <%}%>
+            <a class="has-text-dark has-text-weight-bold" href="/s/<%=snippet._id%>"><%=i+1%>. <%=snippet.title%></a>
+          </div>
+        <% } %>
+        <a href="/explore/all" class="is-size-7">View All</a>
+      </div>
+    </aside>
+  </aside>
+</div>
+<script src="/codemirror/lib/codemirror.js"></script>
+<script src="/codemirror/mode/javascript/javascript.js"></script>
+<script src="/codemirror/mode/clike/clike.js"></script>
+<script src="/codemirror/mode/python/python.js"></script>
+<script src="/codemirror/mode/css/css.js"></script>
+<script src="/codemirror/mode/xml/xml.js"></script>
+<script src="/codemirror/mode/htmlmixed/htmlmixed.js"></script>
+<script src="/codemirror/addon/edit/closebrackets.js"></script>
+<script>
+  let page = 0
+  let toObserve = document.querySelector('.toObserve')
+  const snippetWrapper = document.querySelector('#snippetWrapper')
+  
+  const createNewLoader = ()=>{
+    const element = document.createElement('div')
+    element.classList.add('mt-5')
+    element.innerHTML = "<img src='/images/loader.svg'>"
+    return element
+  }
+
+  const getSnippetLanguage = (l)=>{
+    if (l==='text/x-c++src') return "C++"
+    else if(l==='text/x-python') return "Python"
+    else if(l==='text/x-java') return "Java"
+    else if(l==='text/html') return "HTML"
+    else if(l==='text/css') return "CSS"
+    return "JavaScript"
+  }
+
+  const createCard = (data) =>{
+    const card = document.createElement('div') 
+    card.classList.add('card', 'mt-3')
+    const lang = getSnippetLanguage(data.language)
+    const date = Math.floor((Date.now() - Date.parse(data.timestamp))/(1000*60*60*24))
+
+    const innerHtml = `<div class="card-header is-flex is-flex-wrap-wrap">
+    <p class="card-header-title is-flex is-flex-wrap-wrap is-align-items-center" style="gap: 8px;">
+      <a class="has-text-dark" href="/s/${data._id}">${data.title}</a>
+      <span class="tag is-success is-light">
+          <strong class="has-text-primary">${lang}</strong>
+      </span>
+    </p>
+  </div>
+  <div>
+    <div id="${data._id}"></div>
+  </div>
+  <div class="card-footer" style="width: 100%">
+    <span class="card-footer-item is-size-7 has-text-grey is-flex is-justify-content-space-between">
+      <p>Created ${date} days ago by
+        <a class="has-text-info" href="/u/${data.author.username}">u/${data.author.username}</a>
+      </p>
+      <p>${data.views} views</p>
+    </span> 
+  </div>`
+    card.innerHTML = innerHtml
+    return card
+  }
+
+  const addObserver = async (target)=>{
+    const io = new IntersectionObserver(async(entries, observer)=>{
+
+      entries.forEach(async (entry)=>{
+
+        if(entry.isIntersecting){
+          const res = await fetch(`/apis/snippets?page=${page++}&lang=<%=lang%>`)
+          const data = await res.json()
+
+          observer.disconnect()
+
+
+          if(data.length==0){//no more snippets left
+            target.remove()
+            return
+          }
+
+          const newLoader = createNewLoader()
+
+          let prev = target
+          data.forEach(s=>{
+            const card = createCard(s)
+            snippetWrapper.appendChild(card)
+            const myTextarea = CodeMirror(document.getElementById(s._id), {
+              value: `${s.code}`,
+              lineNumbers: true,
+              mode:  `${s.language}`,
+              tabSize: 2,
+              lineWrapping: true,//scroll = false
+              readOnly: true,
+              autoCloseBrackets: true,
+              theme: `${s.theme}`
+            })
+            prev = card
+          })
+          snippetWrapper.appendChild(newLoader)
+          target.remove()
+          addObserver(newLoader)
+        }
+
+      })
+      
+    })
+    io.observe(target)
+  }
+
+  addObserver(toObserve)//initial
+</script>
+

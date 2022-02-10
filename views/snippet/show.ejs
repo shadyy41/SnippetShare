@@ -1,0 +1,145 @@
+<% layout('./layouts/boilerplate.ejs') %>
+<div class="container p-4 mt-4">
+  <div class="card mt-5">
+    <div class="card-header is-flex is-flex-wrap-wrap">
+      <p class="card-header-title is-flex is-flex-wrap-wrap" style="gap: 8px;">
+        <a class="has-text-dark" href="/s/<%=snippet._id%>"><%=snippet.title%></a>
+        <span class="tag is-success is-light is-size-7">
+          <% if (snippet.language==='text/x-c++src') { %>
+            <span class="has-text-primary">C++</span>
+          <% }else if(snippet.language==='text/x-python'){%>
+            <span class="has-text-primary">Python</span>
+          <% }else if(snippet.language==='text/x-java'){%>
+            <span class="has-text-primary">Java</span>
+          <% }else if(snippet.language==='text/html'){%>
+            <span class="has-text-primary">HTML</span>
+          <% }else if(snippet.language==='text/css'){%>
+            <span class="has-text-primary">CSS</span>
+          <% } else {%>
+            <span class="has-text-primary">Javascript</span>
+          <%}%> 
+        </span>
+      </p>
+      <span class="card-header-icon copy-button" id="share" data-tooltip="Share"> <!--Copy To Clipboard-->
+        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="18px" fill="#a7a7a7"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92c0-1.61-1.31-2.92-2.92-2.92zM18 4c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zM6 13c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1zm12 7.02c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1z"/></svg>
+      </span>
+      <span class="card-header-icon copy-button" id="cpy" data-tooltip="Copy"> <!--Copy To Clipboard-->
+        <svg xmlns="http://www.w3.org/2000/svg" height="18px" viewBox="0 0 24 24" width="18px" fill="#a7a7a7"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
+      </span>
+      <% if(currentUser) { %>
+        <span class="card-header-icon copy-button" <% if(saved){%>
+          style="display: none;"
+          <%}%>data-tooltip="Save" id="save">
+          <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="20px" fill="#a7a7a7"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M17 3H7c-1.1 0-2 .9-2 2v16l7-3 7 3V5c0-1.1-.9-2-2-2zm0 15l-5-2.18L7 18V5h10v13z"/></svg>
+        </span>
+        <span class="card-header-icon copy-button"<%if(!saved){%>
+          style="display: none;"
+          <%}%>data-tooltip="Unsave" id="unsave">
+          <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="20px" fill="#a7a7a7"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M17 3H7c-1.1 0-2 .9-2 2v16l7-3 7 3V5c0-1.1-.9-2-2-2z"/></svg>
+        </span>
+      <% } %>
+    </div>
+    <div>
+      <textarea name="code" id="code-editor"><%=snippet.code%></textarea>
+    </div>
+    <div class="card-footer">
+      <span class="card-footer-item is-size-7 has-text-grey is-flex is-justify-content-space-between is-flex-wrap-wrap">
+        <span>
+          <p>
+            <%= snippet.views %> views 
+          </p>
+          <p>
+            Created <%=Math.floor((Date.now() - snippet.timestamp) / (1000*60*60*24))%> days ago by <a class="has-text-info" href="/u/<%=snippet.author.username%>">u/<%=snippet.author.username%> </a>
+          </p>
+        </span>
+        <div class="is-flex">
+          <% if (currentUser && currentUser.username === snippet.author.username) { %>
+            <a class="button is-warning is-light" href="/s/edit/<%=snippet._id%>"><strong>Edit</strong></a>
+            <form action="/s/<%=snippet._id%>?_method=DELETE" method="post">
+              <button type="submit" class="button is-danger is-light ml-3"><strong>Delete</strong></button>
+            </form>
+          <% } %>
+        </div>
+      </span>
+    </div>
+  </div>
+</div>
+
+<script src="/codemirror/lib/codemirror.js"></script>
+<script src="/codemirror/mode/javascript/javascript.js"></script>
+<script src="/codemirror/mode/clike/clike.js"></script>
+<script src="/codemirror/mode/python/python.js"></script>
+<script src="/codemirror/mode/css/css.js"></script>
+<script src="/codemirror/mode/xml/xml.js"></script>
+<script src="/codemirror/mode/htmlmixed/htmlmixed.js"></script>
+<script src="/codemirror/addon/edit/closebrackets.js"></script>
+<script>
+  const myTextarea = document.getElementById("code-editor")
+  let codeMirror = CodeMirror.fromTextArea(myTextarea, {
+    lineNumbers: true,
+    mode: "text/x-c++src",
+    tabSize: 2,
+    lineWrapping: true,//scroll = false
+    readOnly: true,
+    autoCloseBrackets: true,
+    theme: 'monokai'
+  })
+  codeMirror.setOption('theme', '<%=snippet.theme%>')
+  codeMirror.setOption('mode', '<%=snippet.language%>')
+  
+  const button = document.getElementById('cpy')
+
+  button.onclick=()=>{
+    let field = document.getElementById(`code-editor`)
+    field.select()
+    field.setSelectionRange(0, 99999)
+    navigator.clipboard.writeText(field.value);
+    document.querySelector('#cpy').setAttribute('data-tooltip', 'Copied!')
+  }
+
+  button.onmouseleave=()=>{
+    document.querySelector('#cpy').setAttribute('data-tooltip', 'Copy')
+  }
+
+  const shareButton = document.getElementById('share')
+  shareButton.onclick=()=>{
+    navigator.clipboard.writeText(window.location.href);
+    shareButton.setAttribute('data-tooltip', 'Copied!')
+  }
+
+  shareButton.onmouseleave=()=>{
+    shareButton.setAttribute('data-tooltip', 'Share')
+  }
+
+  const saveButton = document.getElementById('save')
+  const unsaveButton = document.getElementById('unsave')
+
+  if(saveButton){
+    saveButton.onclick=async()=>{
+      const test = await fetch("/s/<%=snippet._id%>/save", {method: "POST"})
+      
+      if(test.status == 500){
+        const flash = document.createElement('div')
+        flash.classList.add('notification', 'is-danger', 'is-light', 'flash')
+        flash.innerHTML = "Snippet Couldn't Be Saved"
+        document.getElementById('wrapper').append(flash)
+        setTimeout(()=>{
+          flash.style.opacity = 0
+          flash.style.visibility = 'hidden'
+        }, 1500)
+        return
+      }
+      saveButton.style.display = 'none'
+      unsaveButton.style.display = 'flex'
+    }
+  }
+  if(unsaveButton){
+    unsaveButton.onclick=async()=>{
+      const test = await fetch("/s/<%=snippet._id%>/save", {method: "DELETE"})
+      if(test.status == 500) return
+      saveButton.style.display = 'flex'
+      unsaveButton.style.display = 'none'
+    }
+  }
+</script>
+

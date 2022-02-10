@@ -1,0 +1,21 @@
+<% layout('./layouts/boilerplate.ejs') %>
+
+<div>
+  <main class="container p-4">
+      <div class="content">
+        <h1 class="title is-1 mt-4">
+          Woah, you have browsed through all the snippets
+        </h1>
+      </div>
+      <footer class="mt-6">
+        <nav class="pagination is-flex is-justify-content-flex-start" role="navigation" aria-label="pagination">
+          <% if(!lang) { %>
+            <a href="?page=<%=active-1%>" class="pagination-previous">Previous</a>
+          <% } else{ %>
+            <a href="?lang=<%=lang%>&page=<%=active-1%>" class="pagination-previous">Previous</a>
+          <% } %> 
+          <a class="pagination-next" disabled>Next page</a>
+        </nav>
+      </footer>
+  </main>
+</div>

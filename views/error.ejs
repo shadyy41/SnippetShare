@@ -1,0 +1,11 @@
+<% layout('./layouts/boilerplate.ejs') %>
+
+<main class="container p-6 has-text-centered">
+  <h1 class="title is-2 mt-6">😕</h1>
+  <h1 class="title is-3 is-size-4-mobile">
+    <%= err.message%>
+  </h1>
+  <p class="subtitle is-5 is-size-6-mobile">
+    status code: <%= err.status %> 
+  </p>
+</main>

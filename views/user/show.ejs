@@ -1,0 +1,105 @@
+<% layout('./layouts/boilerplate.ejs') %>
+
+<div class="container mt-6 p-4 is-flex is-flex-wrap-wrap" style="gap: 16px;">
+  <aside class="card" style="min-width: 280px; height: fit-content;">
+    <div class="card-content">
+      <p class="title is-6 has-text-weight-medium">
+        Basic Profile
+      </p>
+      <hr>
+      <p class="title is-5">
+        <%= user.username %> 
+      </p>
+      <p class="subtitle is-6 has-text-grey">
+        <%= user.email %> 
+      </p>
+      <hr>
+      <p class="is-size-6 has-text-grey">
+        Joined on <%= date %> 
+      </p>
+      <p class="is-size-6 has-text-grey">
+        Snippets created: <%= user.snippets.length %> 
+      </p>
+    </div>
+  </aside>
+  <main class="is-flex-grow-1" style="height: fit-content;">
+    <div class="card">
+      <div class="card-content">
+        <p class="title has-text-weight-medium is-6">
+          Recent Snippets
+        </p>
+        <hr>
+        <% for( let i = 0; i<Math.min(user.snippets.length, 5); i++) { %>
+          <% let snippet = user.snippets[i] %>
+          <div class="is-flex is-flex-wrap-wrap is-align-items-center is-justify-content-space-between">
+            <div class="is-size-6 is-flex is-flex-wrap-wrap is-align-items-center" style="gap: 8px;">
+              <a class="has-text-dark has-text-weight-bold" href="/s/<%=snippet._id%>"><%=snippet.title%></a>
+              <span class="tag is-success is-light has-text-weight-bold">
+                <% if (snippet.language==='text/x-c++src') { %>
+                  <p class="has-text-primary">C++</p>
+                <% }else if(snippet.language==='text/x-python'){%>
+                  <p class="has-text-primary">Python</p>
+                <% }else if(snippet.language==='text/x-java'){%>
+                  <p class="has-text-primary">Java</p>
+                <% }else if(snippet.language==='text/html'){%>
+                  <p class="has-text-primary">HTML</p>
+                <% }else if(snippet.language==='text/css'){%>
+                  <p class="has-text-primary">CSS</p>
+                <% } else {%>
+                  <p class="has-text-primary">Javascript</p>
+                <%}%> 
+              </span>
+            </div>
+            <p class="has-text-grey is-size-7">
+              <%=Math.floor((Date.now() - snippet.timestamp) / (1000*60*60*24))%> days ago
+            </p>
+          </div>
+          <hr>
+        <% } %>
+        <% if(user.snippets.length>5) { %>
+          <a href="/u/<%=user.username%>/snippets" class="is-size-6">View All</a>
+        <% } %>
+      </div>
+    </div>
+    <% if(currentUser && currentUser.equals(user)) { %>
+      <div class="card mt-5">
+        <div class="card-content">
+          <p class="title has-text-weight-medium is-6">
+            Saved Snippets <span class="has-text-grey is-size-7">(only visible to you)</span>
+          </p>
+          <hr>
+          <% for( let i = 0; i<Math.min(user.savedSnippets.length, 5); i++) { %>
+            <% let snippet = user.savedSnippets[i] %>
+            <div class="is-flex is-flex-wrap-wrap is-align-items-center is-justify-content-space-between">
+              <div class="is-size-6 is-flex is-flex-wrap-wrap is-align-items-center" style="gap: 8px;">
+                <a class="has-text-dark has-text-weight-bold" href="/s/<%=snippet._id%>"><%=snippet.title%></a>
+                <span class="tag is-success is-light has-text-weight-bold">
+                  <% if (snippet.language==='text/x-c++src') { %>
+                    <p class="has-text-primary">C++</p>
+                  <% }else if(snippet.language==='text/x-python'){%>
+                    <p class="has-text-primary">Python</p>
+                  <% }else if(snippet.language==='text/x-java'){%>
+                    <p class="has-text-primary">Java</p>
+                  <% }else if(snippet.language==='text/html'){%>
+                    <p class="has-text-primary">HTML</p>
+                  <% }else if(snippet.language==='text/css'){%>
+                    <p class="has-text-primary">CSS</p>
+                  <% } else {%>
+                    <p class="has-text-primary">Javascript</p>
+                  <%}%> 
+                </span>
+              </div>
+              <p class="has-text-grey is-size-7">
+                <%=Math.floor((Date.now() - snippet.timestamp) / (1000*60*60*24))%> days ago
+              </p>
+            </div>
+            <hr>
+          <% } %>
+          <% if(user.savedSnippets.length>5) { %>
+            <a href="/u/<%=user.username%>/snippets" class="is-size-6">View All</a>
+          <% } %>
+        </div>
+      </div>
+    <% } %>
+  </main>
+</div>
