@@ -4,6 +4,7 @@ const { addreturnto } = require('../middleware/addreturnto.js')
 const { isLoggedIn } = require('../middleware/isloggedin.js')
 const router = express.Router()
 const Snippet = require('../models/snippet.js')//Snippet model
+const privateSnippet = require('../models/privateSnippet.js')
 const User = require('../models/user.js')
 const ExpressError = require('../utils/ExpressError.js')
 const WrapAsync = require('../utils/WrapAsync.js')
@@ -11,6 +12,7 @@ const WrapAsync = require('../utils/WrapAsync.js')
 //theme language code title
 
 router.get('/new', (req, res)=>{//new page
+  console.log(privateSnippet)
   res.render('snippet/new.ejs')
 })
 router.get('/edit/:id', WrapAsync(async(req, res)=>{//edit page
@@ -20,8 +22,7 @@ router.get('/edit/:id', WrapAsync(async(req, res)=>{//edit page
   if(!snippet) throw new ExpressError("Snippet Not Found", 404)
 
   if(!req.user || !snippet.author.equals(req.user._id)){
-    req.flash('error', "You don't have permissions for that (:")
-    return res.redirect(`/s/${id}`)
+    throw new ExpressError("Access Denied", 403)
   }
 
   res.render('snippet/edit.ejs', {snippet})
@@ -52,14 +53,69 @@ router.get('/:id', addreturnto, WrapAsync(async(req, res)=>{//show page
   const days = Math.floor((Date.now() - snippet.timestamp) / (1000*60*60*24))
 
   res.render('snippet/show.ejs', {snippet, days, saved})
+
 }))
+
+router.get('/private/:id', addreturnto, WrapAsync(async(req, res)=>{
+  const {id} = req.params
+  const snippet = await privateSnippet.findById(id).populate('author')
+
+  if(!snippet) throw new ExpressError("Snippet Not Found", 404)
+  if(!req.user || !req.user._id.equals(snippet.author._id)) throw new ExpressError("Access Denied", 403)
+
+  try{
+    await snippet.save()
+  }catch(e){
+    throw new ExpressError()
+  }
+
+  const days = Math.floor((Date.now() - snippet.timestamp) / (1000*60*60*24))
+
+  res.render('snippet/private-show.ejs', {snippet, days})
+}))
+
+router.get('/private/edit/:id', WrapAsync(async(req, res)=>{
+  const {id} = req.params
+  const snippet = await privateSnippet.findById(id)
+
+  if(!snippet) throw new ExpressError("Snippet Not Found", 404)
+
+  if(!req.user || !snippet.author.equals(req.user._id)){
+    throw new ExpressError("Access Denied", 403)
+  }
+
+  res.render('snippet/private-edit.ejs', {snippet})
+}))
+
+router.put('/private/edit/:id', WrapAsync(async(req, res)=>{
+  const {id} = req.params
+  req.session.returnTo = null
+  const snippet = await privateSnippet.findByIdAndUpdate(id, req.body)
+
+  if(req.user && snippet.author.equals(req.user._id)){
+    try{
+      await Snippet.findByIdAndUpdate(id, req.body)
+    }catch(e){
+      req.flash('error', "Couldn't Update The Snippet")
+      res.redirect(`/s/private/edit/${id}`)
+    }
+  }
+  else{
+    throw new ExpressError("Access Denied", 403)
+  }
+
+  req.flash('success', "Changes saved!!!")
+  res.redirect(`/s/private/${id}`)
+}))
+
 router.post('/new', isLoggedIn, WrapAsync(async(req, res)=>{
-  const newSnippet = new Snippet(req.body)
+  const newSnippet = (req.body.private)?new privateSnippet(req.body) : new Snippet(req.body)
   newSnippet.author = req.user._id
 
-  const author = await User.findOne({'username': req.user.username})
-  if(!author) throw new ExpressError("How :)", 404)
-  author.snippets.push(newSnippet._id)
+  const author = await User.findById(req.user._id)
+
+  if(req.body.private) author.privateSnippets.push(newSnippet._id)
+  else author.snippets.push(newSnippet._id)
 
   try{
     await author.save()
@@ -73,7 +129,10 @@ router.post('/new', isLoggedIn, WrapAsync(async(req, res)=>{
     throw new ExpressError("Snippet Couldn't Be Saved :(")
   }
 
+  if(req.body.private) return res.redirect(`/s/private/${newSnippet._id}`)
+
   res.redirect(`/s/${newSnippet._id}`)
+
 }))
 router.post('/:id/save', async(req, res)=>{//user wants to save :)
   if(!req.user){//someone using postman
@@ -200,6 +259,50 @@ router.delete('/:id', WrapAsync(async(req, res)=>{
   else{
     req.flash('error', "You can't do that!!");
     return res.redirect(`/s/${id}`)
+  }
+
+  req.flash('success', 'Snippet Deleted!!!')
+  res.redirect('/explore')
+}))
+
+router.delete('/private/:id', WrapAsync(async(req, res)=>{
+  const {id} = req.params
+
+  let snippet
+
+  try{
+    snippet = await privateSnippet.findById(id)
+  }
+  catch(e){
+    throw new ExpressError()
+  }
+
+  if(req.user && snippet.author.equals(req.user._id)){
+    let author
+
+    try{
+      author = await User.findById(snippet.author)
+    }catch(e){
+      throw new ExpressError("Access Denied", 403)
+    }
+
+    author.privateSnippets = author.privateSnippets.filter(i=>!(i.equals(snippet._id)))
+
+    try{
+      await author.save()
+    }catch(e){
+      console.log("DB Error while deleting snippet")
+    }
+
+    try{
+      await privateSnippet.findByIdAndDelete(id)
+    }
+    catch(e){
+      console.log("DB Error while deleting snippet")
+    }
+  }
+  else{
+    throw new ExpressError("Access Denied", 403)
   }
 
   req.flash('success', 'Snippet Deleted!!!')

@@ -19,6 +19,12 @@ const userSchema = new Schema({
       ref: 'Snippet'
     }
   ],
+  privateSnippets: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: 'PrivateSnippet'
+    }
+  ],
   email: {
     type: String,
     required: true,

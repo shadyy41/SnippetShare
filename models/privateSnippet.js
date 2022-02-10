@@ -17,8 +17,8 @@ const snippetSchema = new Schema({
   }
 })
 
-const Snippet = mongoose.models.Snippet || mongoose.model('Snippet', snippetSchema)
+const privateSnippet = mongoose.model('PrivateSnippet', snippetSchema)
 
 
 
-module.exports = Snippet
+module.exports = privateSnippet
