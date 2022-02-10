@@ -14,16 +14,6 @@ const snippetSchema = new Schema({
   author: {
     type: Schema.Types.ObjectId,
     ref: 'User'
-  },
-  savers: [
-    {
-      type: Schema.Types.ObjectId,
-      ref: 'User'
-    }
-  ],
-  views: {
-    type: Number,
-    default: 0
   }
 })
 
