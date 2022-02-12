@@ -70,7 +70,6 @@
           <hr>
           <% for( let i = 0; i<Math.min(user.privateSnippets.length, 5); i++) { %>
             <% let snippet = user.privateSnippets[i] %>
-            <% console.log(snippet) %> 
             <div class="is-flex is-flex-wrap-wrap is-align-items-center is-justify-content-space-between">
               <div class="is-size-6 is-flex is-flex-wrap-wrap is-align-items-center" style="gap: 8px;">
                 <a class="has-text-dark has-text-weight-bold" href="/s/private/<%=snippet._id%>"><%=snippet.title%></a>

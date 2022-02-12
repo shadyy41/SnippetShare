@@ -61,9 +61,6 @@ router.get('/private/:id', addreturnto, WrapAsync(async(req, res)=>{
   const user = await User.findById(req.user._id).populate('privateSnippets')
   if(!user) throw new ExpressError()//some server error
 
-
-  // const snippet = await privateSnippet.findById(id).populate('author')
-
   let snippet
 
   for(let snip of user.privateSnippets){
