@@ -12,7 +12,6 @@ const WrapAsync = require('../utils/WrapAsync.js')
 //theme language code title
 
 router.get('/new', (req, res)=>{//new page
-  console.log(privateSnippet)
   res.render('snippet/new.ejs')
 })
 router.get('/edit/:id', WrapAsync(async(req, res)=>{//edit page
