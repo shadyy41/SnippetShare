@@ -56,14 +56,28 @@ router.get('/:id', addreturnto, WrapAsync(async(req, res)=>{//show page
 }))
 
 router.get('/private/:id', addreturnto, WrapAsync(async(req, res)=>{
+  if(!req.user) throw new ExpressError("Access Denied", 403)
   const {id} = req.params
-  const snippet = await privateSnippet.findById(id).populate('author')
+  const user = await User.findById(req.user._id).populate('privateSnippets')
+  if(!user) throw new ExpressError()//some server error
+
+
+  // const snippet = await privateSnippet.findById(id).populate('author')
+
+  let snippet
+
+  for(let snip of user.privateSnippets){
+    if(snip._id.equals(id)){
+      snippet = snip
+      break
+    }
+  }
 
   if(!snippet) throw new ExpressError("Snippet Not Found", 404)
-  if(!req.user || !req.user._id.equals(snippet.author._id)) throw new ExpressError("Access Denied", 403)
+
 
   try{
-    await snippet.save()
+    await snippet.populate('author')
   }catch(e){
     throw new ExpressError()
   }
