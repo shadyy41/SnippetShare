@@ -62,7 +62,48 @@
       </div>
     </div>
     <% if(currentUser && currentUser.equals(user)) { %>
-      <div class="card mt-5">
+      <div class="card mt-4">
+        <div class="card-content">
+          <p class="title has-text-weight-medium is-6">
+            Private Snippets <span class="has-text-grey is-size-7">(only visible to you)</span>
+          </p>
+          <hr>
+          <% for( let i = 0; i<Math.min(user.privateSnippets.length, 5); i++) { %>
+            <% let snippet = user.privateSnippets[i] %>
+            <% console.log(snippet) %> 
+            <div class="is-flex is-flex-wrap-wrap is-align-items-center is-justify-content-space-between">
+              <div class="is-size-6 is-flex is-flex-wrap-wrap is-align-items-center" style="gap: 8px;">
+                <a class="has-text-dark has-text-weight-bold" href="/s/private/<%=snippet._id%>"><%=snippet.title%></a>
+                <span class="tag is-success is-light has-text-weight-bold">
+                  <% if (snippet.language==='text/x-c++src') { %>
+                    <p class="has-text-primary">C++</p>
+                  <% }else if(snippet.language==='text/x-python'){%>
+                    <p class="has-text-primary">Python</p>
+                  <% }else if(snippet.language==='text/x-java'){%>
+                    <p class="has-text-primary">Java</p>
+                  <% }else if(snippet.language==='text/html'){%>
+                    <p class="has-text-primary">HTML</p>
+                  <% }else if(snippet.language==='text/css'){%>
+                    <p class="has-text-primary">CSS</p>
+                  <% } else {%>
+                    <p class="has-text-primary">Javascript</p>
+                  <%}%> 
+                </span>
+              </div>
+              <p class="has-text-grey is-size-7">
+                <%=Math.floor((Date.now() - snippet.timestamp) / (1000*60*60*24))%> days ago
+              </p>
+            </div>
+            <hr>
+          <% } %>
+          <% if(user.savedSnippets.length>5) { %>
+            <a href="/u/<%=user.username%>/snippets" class="is-size-6">View All</a>
+          <% } %>
+        </div>
+      </div>
+    <% } %>
+    <% if(currentUser && currentUser.equals(user)) { %>
+      <div class="card mt-4">
         <div class="card-content">
           <p class="title has-text-weight-medium is-6">
             Saved Snippets <span class="has-text-grey is-size-7">(only visible to you)</span>

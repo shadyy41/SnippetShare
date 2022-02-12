@@ -67,7 +67,7 @@ router.get('/u/:username', addreturnto, WrapAsync(async(req, res)=>{
   const user = await User.findOne({'username': username}).populate({
     path: 'snippets',
     options: {sort: {'timestamp': -1}}
-  }).populate({path:'savedSnippets', options: {sort: {'timestamp': -1}}})
+  }).populate({path:'savedSnippets', options: {sort: {'timestamp': -1}}}).populate({path:'privateSnippets', options: {sort: {'timestamp': -1}}})
 
   if(!user) throw new ExpressError("User Not Found", 404)
 
