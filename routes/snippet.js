@@ -1,5 +1,4 @@
 const express = require('express')
-const mongoose = require('mongoose')
 const { addreturnto } = require('../middleware/addreturnto.js')
 const { isLoggedIn } = require('../middleware/isloggedin.js')
 const router = express.Router()
@@ -8,6 +7,7 @@ const privateSnippet = require('../models/privateSnippet.js')
 const User = require('../models/user.js')
 const ExpressError = require('../utils/ExpressError.js')
 const WrapAsync = require('../utils/WrapAsync.js')
+const validateSnippet = require('../middleware/validatesnippet.js')
 
 //theme language code title
 
@@ -97,7 +97,7 @@ router.get('/private/edit/:id', WrapAsync(async(req, res)=>{
   res.render('snippet/private-edit.ejs', {snippet})
 }))
 
-router.put('/private/edit/:id', WrapAsync(async(req, res)=>{
+router.put('/private/edit/:id', validateSnippet, WrapAsync(async(req, res)=>{
   const {id} = req.params
   req.session.returnTo = null
   const snippet = await privateSnippet.findByIdAndUpdate(id, req.body)
@@ -118,7 +118,7 @@ router.put('/private/edit/:id', WrapAsync(async(req, res)=>{
   res.redirect(`/s/private/${id}`)
 }))
 
-router.post('/new', isLoggedIn, WrapAsync(async(req, res)=>{
+router.post('/new', isLoggedIn, validateSnippet, WrapAsync(async(req, res)=>{
   const newSnippet = (req.body.private)?new privateSnippet(req.body) : new Snippet(req.body)
   newSnippet.author = req.user._id
 
@@ -188,7 +188,7 @@ router.delete('/:id/save', async(req, res)=>{
 
   res.status(200).send("Worked")
 })
-router.put('/edit/:id', WrapAsync(async(req, res)=>{
+router.put('/edit/:id', validateSnippet, WrapAsync(async(req, res)=>{
   const {id} = req.params
   req.session.returnTo = null
   const snippet = await Snippet.findByIdAndUpdate(id, req.body)
