@@ -29,7 +29,7 @@ router.get('/snippets', async(req, res)=>{
     snippets = await Snippet.find({}).sort({'_id': -1}).limit(3).skip(3*(page)).populate('author')
   }
   else if(top){//top
-    snippets = await Snippet.find({timestamp: {$gt: cutoff}}).limit(3).skip(3*(page)).sort({'views': -1})
+    snippets = await Snippet.find({timestamp: {$gt: cutoff}}).limit(3).skip(3*(page)).sort({'views': -1}).populate('author')
   }
   else{//according to language
     const cmLang = getLang(lang)

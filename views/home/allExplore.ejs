@@ -1,16 +1,18 @@
 <% layout('./layouts/boilerplate.ejs') %>
-<div class="container mt-4 p-4 is-flex is-justify-content-center" style="gap: 14px; width: 100%; position: relative;">
+<div class="container mt-4 p-4 is-flex is-justify-content-center" style="gap: 32px; width: 100%; position: relative;">
   <main id="snippetWrapper" class="is-flex is-flex-direction-column is-flex-grow-1" style="max-width: 720px;">
     <div class="" style="width: 100%;">
-      <h1 class="title">Top Snippets</h1>
+      <span class="mt-4 is-flex is-align-items-center">
+        <h1 class="title is-4">Top Snippets🚀</h1><span class="subtitle is-size-7 ml-2">30 days</span>
+      </span>
     </div>
     <div class="toObserve mt-5"><img src="/images/loader.svg"></div>
   </main>
 
   <aside class="is-flex is-flex-direction-column is-hidden-touch">
-    <div style=" position: sticky; top: 78px;">
+    <div style=" position: sticky; top: 78px;  margin-top: 80px;">
       <% if(currentUser){%>
-        <aside class="card mt-4" style="width: 320px; height: fit-content;">
+        <aside class="card" style="width: 320px; height: fit-content;">
           <div class="card-content is-flex is-align-items-center is-justify-content-space-between">
             <div>
               <p class="is-6 has-text-weight-medium">
