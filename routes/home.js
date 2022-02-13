@@ -29,6 +29,10 @@ const getLang =(lang)=>{
   return null
 }
 
+router.get('/top', addreturnto, (req, res)=>{
+  res.render('home/allExplore.ejs')
+})
+
 router.get('/:lang', addreturnto, WrapAsync(async(req, res)=>{
   const {lang} = req.params
   const cmLang = getLang(lang)
@@ -38,10 +42,5 @@ router.get('/:lang', addreturnto, WrapAsync(async(req, res)=>{
   const topSnippets = await Snippet.find({timestamp: {$gt: cutoff}}).limit(5).sort({'views': -1})
   res.render('home/langExplore.ejs', {topSnippets, lang})
 }))
-
-/*
-  Negative pages
-  Or Pages for whic we dont have a result for
-*/
 
 module.exports = router

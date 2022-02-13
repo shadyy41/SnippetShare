@@ -2,55 +2,13 @@
 <div class="container mt-4 p-4 is-flex is-justify-content-center" style="gap: 14px; width: 100%; position: relative;">
   <main id="snippetWrapper" class="is-flex is-flex-direction-column is-flex-grow-1" style="max-width: 720px;">
     <div class="" style="width: 100%;">
-      <div class="card p-4" style="width: 100%;">
-        <div class="tags">
-          <strong class="tag is-info">
-            <a class="has-text-light" href="/explore">All</a>
-          </strong>
-          <strong class="tag is-info is-light">
-            <a class="has-text-info" href="/explore/cpp">C++</a>
-          </strong>
-          <strong class="tag is-info is-light">
-            <a class="has-text-info" href="/explore/java">Java</a>
-          </strong>
-          <strong class="tag is-info is-light">
-            <a class="has-text-info" href="/explore/html">HTML</a>
-          </strong>
-          <strong class="tag is-info is-light">
-            <a class="has-text-info" href="/explore/py">Python</a>
-          </strong>
-          <strong class="tag is-info is-light">
-            <a class="has-text-info" href="/explore/css">CSS</a>
-          </strong>
-          <strong class="tag is-info is-light">
-            <a class="has-text-info" href="/explore/js">Javascript</a>
-          </strong>
-        </div>
-      </div>
+      <h1 class="title">Top Snippets</h1>
     </div>
     <div class="toObserve mt-5"><img src="/images/loader.svg"></div>
   </main>
 
   <aside class="is-flex is-flex-direction-column is-hidden-touch">
     <div style=" position: sticky; top: 78px;">
-      <aside class="card" style="width: 320px; height: fit-content;">
-        <div class="card-content">
-          <p class="title is-6 has-text-weight-medium">
-            Top Posts 🚀<span class="has-text-grey is-size-7 ml-2">30 days</span>
-          </p>
-          <hr>
-          <% for( let i = 0; i<topSnippets.length; i++) { %>
-            <% let snippet = topSnippets[i] %> 
-            <div class="is-flex is-justify-content-space-between is-align-items-center mb-3">
-              <% if(snippet.title.length>=27){ %>
-                <%snippet.title = snippet.title.slice(0, 27).concat('...')%>
-              <%}%>
-              <a class="has-text-dark has-text-weight-bold" href="/s/<%=snippet._id%>"><%=i+1%>. <%=snippet.title%></a>
-            </div>
-          <% } %>
-          <a href="/explore/top" class="is-size-7">View All</a>
-        </div>
-      </aside>
       <% if(currentUser){%>
         <aside class="card mt-4" style="width: 320px; height: fit-content;">
           <div class="card-content is-flex is-align-items-center is-justify-content-space-between">
@@ -139,7 +97,7 @@
       entries.forEach(async (entry)=>{
 
         if(entry.isIntersecting){
-          const res = await fetch(`/apis/snippets?page=${page++}`)
+          const res = await fetch(`/apis/snippets?page=${page++}&top=1`)
           const data = await res.json()
 
           observer.disconnect()

@@ -1,5 +1,5 @@
 <% layout('./layouts/boilerplate.ejs') %>
-<div class="container mt-6 p-4 is-flex is-justify-content-center" style="gap: 32px; width: 100%;">
+<div class="container mt-4 p-4 is-flex is-justify-content-center" style="gap: 14px; width: 100%;">
   <main id="snippetWrapper" class="is-flex is-flex-direction-column is-flex-grow-1" style="max-width: 720px;">
     <div class="" style="width: 100%;">
       <div class="card p-4" style="width: 100%;">
@@ -68,24 +68,47 @@
   </main>
 
   <aside class="is-flex is-flex-direction-column is-hidden-touch">
-    <aside class="card" style="width: 320px; height: fit-content;">
-      <div class="card-content">
-        <p class="title is-6 has-text-weight-medium">
-          Top Posts 🚀<span class="has-text-grey is-size-7 ml-2">30 days</span>
-        </p>
-        <hr>
-        <% for( let i = 0; i<topSnippets.length; i++) { %>
-          <% let snippet = topSnippets[i] %> 
-          <div class="is-flex is-justify-content-space-between is-align-items-center mb-3">
-            <% if(snippet.title.length>=27){ %>
-              <%snippet.title = snippet.title.slice(0, 27).concat('...')%>
-            <%}%>
-            <a class="has-text-dark has-text-weight-bold" href="/s/<%=snippet._id%>"><%=i+1%>. <%=snippet.title%></a>
+    <div style=" position: sticky; top: 78px;">
+      <aside class="card" style="width: 320px; height: fit-content;">
+        <div class="card-content">
+          <p class="title is-6 has-text-weight-medium">
+            Top Posts 🚀<span class="has-text-grey is-size-7 ml-2">30 days</span>
+          </p>
+          <hr>
+          <% for( let i = 0; i<topSnippets.length; i++) { %>
+            <% let snippet = topSnippets[i] %> 
+            <div class="is-flex is-justify-content-space-between is-align-items-center mb-3">
+              <% if(snippet.title.length>=27){ %>
+                <%snippet.title = snippet.title.slice(0, 27).concat('...')%>
+              <%}%>
+              <a class="has-text-dark has-text-weight-bold" href="/s/<%=snippet._id%>"><%=i+1%>. <%=snippet.title%></a>
+            </div>
+          <% } %>
+          <a href="/explore/top" class="is-size-7">View All</a>
+        </div>
+      </aside>
+      <% if(currentUser){%>
+        <aside class="card mt-4" style="width: 320px; height: fit-content;">
+          <div class="card-content is-flex is-align-items-center is-justify-content-space-between">
+            <div>
+              <p class="is-6 has-text-weight-medium">
+                u/<%= currentUser.username %><a class="has-text-grey is-size-7 ml-2" href="/u/<%=currentUser.username%>">view profile</a>
+              </p>
+              <div>
+                <a href="/u/<%=currentUser.username%>/snippets" class="is-size-7">All</a>
+                <span class="is-size-6"> · </span>
+                <a href="/u/<%=currentUser.username%>/saved" class="is-size-7">Saved</a>
+                <span class="is-size-6"> · </span>
+                <a href="/u/<%=currentUser.username%>/private" class="is-size-7">Private</a>
+              </div>
+            </div>
+            <a class="button is-info is-small" href="/s/new">
+              <strong>Create</strong>
+            </a>
           </div>
-        <% } %>
-        <a href="/explore/all" class="is-size-7">View All</a>
-      </div>
-    </aside>
+        </aside>
+      <% } %>
+    </div>
   </aside>
 </div>
 <script src="/codemirror/lib/codemirror.js"></script>
