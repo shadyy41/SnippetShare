@@ -3,7 +3,6 @@ const ExpressError = require("../utils/ExpressError")
 
 const validateUser = (req, res, next)=>{
   const {error} = userSchema.validate(req.body)
-  console.log(error)
   if(error){
     throw new ExpressError("Bad Request!", 400)
   }
