@@ -23,12 +23,10 @@ const extension = (joi)=>({
 
 const Joi = baseJoi.extend(extension)
 
-const snippetSchema = Joi.object({
-  title: Joi.string().max(50).required().escapeHTML(),
-  theme: Joi.string().required(),
-  language: Joi.string().required(),
-  code: Joi.string().allow(''),
-  private: Joi.string()
+const userSchema = Joi.object({
+  username: Joi.string().max(10).required().escapeHTML(),
+  email: Joi.string().email().max(254).required().escapeHTML(),
+  password: Joi.string().required()
 })
 
-module.exports = snippetSchema
+module.exports = userSchema

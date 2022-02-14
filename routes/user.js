@@ -5,11 +5,12 @@ const passport = require('passport')
 const { addreturnto } = require('../middleware/addreturnto.js')
 const WrapAsync = require('../utils/WrapAsync.js')
 const ExpressError = require('../utils/ExpressError.js')
+const validateUser = require('../middleware/validateuser.js')
 
 router.get('/signup', (req, res)=>{
   res.render('user/signup.ejs')
 })
-router.post('/signup', WrapAsync(async (req, res)=>{
+router.post('/signup', validateUser,WrapAsync(async (req, res)=>{
   try{
     const {email, username, password} = req.body
     const user = new User({email, username})
