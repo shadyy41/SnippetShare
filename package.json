@@ -4,7 +4,9 @@
   "description": "A website to store and share code snippets.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon app.js",
+    "start": "node app.js"
   },
   "author": "shadyy41",
   "license": "ISC",
