@@ -1,61 +1,40 @@
 <% layout('./layouts/boilerplate.ejs') %>
-
-
-  <main class="container p-4">
-    <h1 class="title is-3 mt-6 ml-1">
-      <%= user.username %>'s snippets
-    </h1>
-    <p class="subtitle is-6 ml-1">Page <%=parseInt(active)+1%></p>
-    <% for( let snippet of user.snippets ) { %>
-      <div class="card mt-5">
-        <div class="card-header is-flex is-flex-wrap-wrap">
-          <p class="card-header-title is-flex is-flex-wrap-wrap is-align-items-center" style="gap: 8px;">
-            <a class="has-text-dark" href="/s/<%=snippet._id%>"><%=snippet.title%></a>
-            <span class="tag is-success is-light is-size-7">
-              <% if (snippet.language==='text/x-c++src') { %>
-                <span class="has-text-primary">C++</span>
-              <% }else if(snippet.language==='text/x-python'){%>
-                <span class="has-text-primary">Python</span>
-              <% }else if(snippet.language==='text/x-java'){%>
-                <span class="has-text-primary">Java</span>
-              <% }else if(snippet.language==='text/html'){%>
-                <span class="has-text-primary">HTML</span>
-              <% }else if(snippet.language==='text/css'){%>
-                <span class="has-text-primary">CSS</span>
-              <% } else {%>
-                <span class="has-text-primary">Javascript</span>
-              <%}%> 
-            </span>
-          </p>
-          <span class="card-header-icon copy-button" id="cpy<%=snippet._id%>" data-tooltip="Copy"> <!--Copy To Clipboard-->
-            <svg xmlns="http://www.w3.org/2000/svg" height="18px" viewBox="0 0 24 24" width="18px" fill="#a7a7a7"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
-          </span>
-        </div>
-        <div>
-          <textarea name="code" id="<%=snippet._id%>"><%=snippet.code%></textarea>
-        </div>
-        <div class="card-footer" style="width: fit-content;">
-          <span class="card-footer-item is-size-7 has-text-grey">
-            <p>Created <%=Math.floor((Date.now() - snippet.timestamp) / (1000*60*60*24))%> days ago
-            </p>
-          </span> 
-        </div>
-      </div>
-    <% } %>
-    <footer class="mt-6">
-      <% if(active==0) { %>
-        <nav class="pagination is-flex is-justify-content-flex-end" role="navigation" aria-label="pagination">
-          <a class="pagination-previous" disabled>Previous</a>
-          <a href="?page=<%=1+parseInt(active)%>"class="pagination-next">Next page</a>
-        </nav>
-      <% } else{%>
-        <nav class="pagination is-flex is-justify-content-flex-end" role="navigation" aria-label="pagination">
-          <a href="?page=<%=active-1%>" class="pagination-previous">Previous</a>
-          <a href="?page=<%=1+parseInt(active)%>"class="pagination-next">Next page</a>
-        </nav>
-      <%}%> 
-    </footer>
+<div class="container mt-4 p-4 is-flex is-justify-content-center" style="gap: 32px; width: 100%; position: relative;">
+  <main id="snippetWrapper" class="is-flex is-flex-direction-column is-flex-grow-1" style="max-width: 720px;">
+    <div class="" style="width: 100%;">
+      <span class="mt-4 mb-4 is-flex is-align-items-center">
+        <h1 class="title is-4"><%= user.username %>'s snippets </h1>
+      </span>
+    </div>
+    <div class="toObserve mt-5"><img src="/images/loader.svg"></div>
   </main>
+
+  <aside class="is-flex is-flex-direction-column is-hidden-touch">
+    <div style=" position: sticky; top: 78px;  margin-top: 71px;">
+      <% if(currentUser){%>
+        <aside class="card" style="width: 320px; height: fit-content;">
+          <div class="card-content is-flex is-align-items-center is-justify-content-space-between">
+            <div>
+              <p class="is-6 has-text-weight-medium">
+                u/<%= currentUser.username %><a class="has-text-grey is-size-7 ml-2" href="/u/<%=currentUser.username%>">view profile</a>
+              </p>
+              <div>
+                <a href="/u/<%=currentUser.username%>/snippets" class="is-size-7">All</a>
+                <span class="is-size-6"> · </span>
+                <a href="/u/<%=currentUser.username%>/saved" class="is-size-7">Saved</a>
+                <span class="is-size-6"> · </span>
+                <a href="/u/<%=currentUser.username%>/private" class="is-size-7">Private</a>
+              </div>
+            </div>
+            <a class="button is-info is-small" href="/s/new">
+              <strong>Create</strong>
+            </a>
+          </div>
+        </aside>
+      <% } %>
+    </div>
+  </aside>
+</div>
 <script src="/codemirror/lib/codemirror.js"></script>
 <script src="/codemirror/mode/javascript/javascript.js"></script>
 <script src="/codemirror/mode/clike/clike.js"></script>
@@ -64,35 +43,99 @@
 <script src="/codemirror/mode/xml/xml.js"></script>
 <script src="/codemirror/mode/htmlmixed/htmlmixed.js"></script>
 <script src="/codemirror/addon/edit/closebrackets.js"></script>
-
 <script>
-  const snippets = <%-JSON.stringify(user.snippets)%>;
-
-  for(let snippet of snippets){
-    const myTextarea = document.getElementById(snippet._id)
-
-    CodeMirror.fromTextArea(myTextarea, {
-      lineNumbers: true,
-      mode: "text/x-c++src",
-      tabSize: 2,
-      lineWrapping: true,//scroll = false
-      readOnly: true,
-      autoCloseBrackets: true,
-      theme: `${snippet.theme}`
-    })
-
-    const button  = document.getElementById(`cpy${snippet._id}%>`)
-
-    button.onclick=()=>{
-      let field = document.getElementById(`${snippet._id}%>`)
-      field.select()
-      field.setSelectionRange(0, 99999)
-      navigator.clipboard.writeText(field.value);
-      button.setAttribute('data-tooltip', 'Copied!')
-    }
-    button.onmouseleave =()=>{
-      button.setAttribute('data-tooltip', 'Copy')
-    }
-  }
+  let page = 0
+  let toObserve = document.querySelector('.toObserve')
+  const snippetWrapper = document.querySelector('#snippetWrapper')
   
+  const createNewLoader = ()=>{
+    const element = document.createElement('div')
+    element.classList.add('mt-5')
+    element.innerHTML = "<img src='/images/loader.svg'>"
+    return element
+  }
+
+  const getSnippetLanguage = (l)=>{
+    if (l==='text/x-c++src') return "C++"
+    else if(l==='text/x-python') return "Python"
+    else if(l==='text/x-java') return "Java"
+    else if(l==='text/html') return "HTML"
+    else if(l==='text/css') return "CSS"
+    return "JavaScript"
+  }
+
+  const createCard = (data, username) =>{
+    const card = document.createElement('div') 
+    card.classList.add('card', 'mt-3')
+    const lang = getSnippetLanguage(data.language)
+    const date = Math.floor((Date.now() - Date.parse(data.timestamp))/(1000*60*60*24))
+
+    const innerHtml = `<div class="card-header is-flex is-flex-wrap-wrap">
+    <p class="card-header-title is-flex is-flex-wrap-wrap is-align-items-center" style="gap: 8px;">
+      <a class="has-text-dark" href="/s/${data._id}">${data.title}</a>
+      <span class="tag is-success is-light">
+          <strong class="has-text-primary">${lang}</strong>
+      </span>
+    </p>
+  </div>
+  <div>
+    <div id="${data._id}"></div>
+  </div>
+  <div class="card-footer" style="width: 100%">
+    <span class="card-footer-item is-size-7 has-text-grey is-flex is-justify-content-space-between">
+      <p>Created ${date} days ago by
+        <a class="has-text-info" href="/u/${username}">u/${username}</a>
+      </p>
+      <p>${data.views} views</p>
+    </span> 
+  </div>`
+    card.innerHTML = innerHtml
+    return card
+  }
+
+  const addObserver = async (target)=>{
+    const io = new IntersectionObserver(async(entries, observer)=>{
+
+      entries.forEach(async (entry)=>{
+
+        if(entry.isIntersecting){
+          const res = await fetch(`/apis/<%=user.username%>/snippets?page=${page++}`)
+          const user = await res.json();
+          const data = user.snippets
+
+          observer.disconnect()
+          if(data.length==0){//no more snippets left
+            target.remove()
+            return
+          }
+
+          const newLoader = createNewLoader()
+
+          data.forEach(s=>{
+            const card = createCard(s, user.username)
+            snippetWrapper.appendChild(card)
+            const myTextarea = CodeMirror(document.getElementById(s._id), {
+              value: `${s.code}`,
+              lineNumbers: true,
+              mode:  `${s.language}`,
+              tabSize: 2,
+              lineWrapping: true,//scroll = false
+              readOnly: true,
+              autoCloseBrackets: true,
+              theme: `${s.theme}`
+            })
+          })
+          snippetWrapper.appendChild(newLoader)
+          target.remove()
+          addObserver(newLoader)
+        }
+
+      })
+      
+    })
+    io.observe(target)
+  }
+
+  addObserver(toObserve)//initial
 </script>
+

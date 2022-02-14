@@ -46,20 +46,11 @@ router.get('/logout', (req, res)=>{
 
 router.get('/u/:username/snippets', addreturnto, WrapAsync(async(req, res)=>{
   const {username} = req.params
-  let {page} = req.query
-
-  const user = await User.findOne({'username': username}).populate({
-    path: 'snippets', 
-    perDocumentLimit: 3,
-    options: { skip: page*3, sort: {'timestamp': -1}}
-  })
+  const user = await User.findOne({'username': username})
 
   if(!user) throw new ExpressError("User Not Found", 404)
 
-  if(!page) page = 0
-  const active = page
-
-  res.render('user/usersnippets.ejs', {user, active})
+  res.render('user/usersnippets.ejs', {user})
 }))
 
 router.get('/u/:username', addreturnto, WrapAsync(async(req, res)=>{
