@@ -1,0 +1,70 @@
+<% layout('./layouts/boilerplate.ejs') %>
+<div class="container mt-4 p-4 is-flex is-justify-content-center" style="gap: 32px; width: 100%; position: relative;">
+  <main id="snippetWrapper" class="is-flex is-flex-direction-column is-flex-grow-1" style="max-width: 720px;">
+    <div class="" style="width: 100%;">
+      <span class="mt-4 mb-4 is-flex is-align-items-center">
+        <h1 class="title is-4">Private Snippets</h1>
+        <span class="subtitle has-text-grey is-size-7 ml-2">(only visible to you)</span> 
+      </span>
+    </div>
+    <div class="card">
+      <div class="card-content">
+        <% for( let i = 0; i<user.privateSnippets.length; i++) { %>
+          <% let snippet = user.privateSnippets[i] %>
+          <div class="is-flex is-flex-wrap-wrap is-align-items-center is-justify-content-space-between">
+            <div class="is-size-6 is-flex is-flex-wrap-wrap is-align-items-center" style="gap: 8px;">
+              <a class="has-text-dark has-text-weight-bold" href="/s/<%=snippet._id%>"><%=snippet.title%></a>
+              <span class="tag is-success is-light has-text-weight-bold">
+                <% if (snippet.language==='text/x-c++src') { %>
+                  <p class="has-text-primary">C++</p>
+                <% }else if(snippet.language==='text/x-python'){%>
+                  <p class="has-text-primary">Python</p>
+                <% }else if(snippet.language==='text/x-java'){%>
+                  <p class="has-text-primary">Java</p>
+                <% }else if(snippet.language==='text/html'){%>
+                  <p class="has-text-primary">HTML</p>
+                <% }else if(snippet.language==='text/css'){%>
+                  <p class="has-text-primary">CSS</p>
+                <% } else {%>
+                  <p class="has-text-primary">Javascript</p>
+                <%}%> 
+              </span>
+            </div>
+            <p class="has-text-grey is-size-7">
+              <%=Math.floor((Date.now() - snippet.timestamp) / (1000*60*60*24))%> days ago
+            </p>
+          </div>
+          <% if (i<user.privateSnippets.length-1) { %>
+            <hr>
+          <% } %>
+        <% } %>
+      </div>
+    </div>
+  </main>
+
+  <aside class="is-flex is-flex-direction-column is-hidden-touch">
+    <div style=" position: sticky; top: 78px;  margin-top: 83px;">
+      <% if(currentUser){%>
+        <aside class="card" style="width: 320px; height: fit-content;">
+          <div class="card-content is-flex is-align-items-center is-justify-content-space-between">
+            <div>
+              <p class="is-6 has-text-weight-medium">
+                u/<%= currentUser.username %><a class="has-text-grey is-size-7 ml-2" href="/u/<%=currentUser.username%>">view profile</a>
+              </p>
+              <div>
+                <a href="/u/<%=currentUser.username%>/snippets" class="is-size-7">All</a>
+                <span class="is-size-6"> · </span>
+                <a href="/u/<%=currentUser.username%>/saved" class="is-size-7">Saved</a>
+                <span class="is-size-6"> · </span>
+                <a href="/u/<%=currentUser.username%>/private" class="is-size-7">Private</a>
+              </div>
+            </div>
+            <a class="button is-info is-small" href="/s/new">
+              <strong>Create</strong>
+            </a>
+          </div>
+        </aside>
+      <% } %>
+    </div>
+  </aside>
+</div>

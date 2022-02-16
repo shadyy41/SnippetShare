@@ -53,13 +53,35 @@ router.get('/u/:username/snippets', addreturnto, WrapAsync(async(req, res)=>{
   res.render('user/usersnippets.ejs', {user})
 }))
 
+router.get('/u/:username/private', addreturnto, WrapAsync(async(req, res)=>{
+  const {username} = req.params
+  if(!req.user || username!==req.user.username) throw new ExpressError("Access Denied", 403)
+
+  const user = await User.findOne({'username': username}).populate({path:'privateSnippets', options: {sort: {'_id': -1}}})
+
+  if(!user) throw new ExpressError("User Not Found", 404)
+
+  res.render('user/privatesnippets.ejs', {user})
+}))
+
+router.get('/u/:username/saved', addreturnto, WrapAsync(async(req, res)=>{
+  const {username} = req.params
+  if(!req.user || username!==req.user.username) throw new ExpressError("Access Denied", 403)
+
+  const user = await User.findOne({'username': username}).populate({path:'savedSnippets', options: {sort: {'_id': -1}}})
+
+  if(!user) throw new ExpressError("User Not Found", 404)
+
+  res.render('user/savedsnippets.ejs', {user})
+}))
+
 router.get('/u/:username', addreturnto, WrapAsync(async(req, res)=>{
   const {username} = req.params
 
   const user = await User.findOne({'username': username}).populate({
     path: 'snippets',
-    options: {sort: {'timestamp': -1}}
-  }).populate({path:'savedSnippets', options: {sort: {'timestamp': -1}}}).populate({path:'privateSnippets', options: {sort: {'timestamp': -1}}})
+    options: {sort: {'_id': -1}}
+  }).populate({path:'savedSnippets', options: {sort: {'_id': -1}}}).populate({path:'privateSnippets', options: {sort: {'_id': -1}}})
 
   if(!user) throw new ExpressError("User Not Found", 404)
 

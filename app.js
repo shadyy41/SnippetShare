@@ -20,8 +20,8 @@ const localStrategy = require('passport-local')
 const { addreturnto } = require('./middleware/addreturnto.js')
 const ExpressError = require('./utils/ExpressError.js')
 const mongoSanitize = require('express-mongo-sanitize')
-// const dbUrl = process.env.DB_URL
-const dbUrl = 'mongodb://localhost:27017/snippet-share'
+const dbUrl = process.env.DB_URL
+// const dbUrl = 'mongodb://localhost:27017/snippet-share'
 const MongoStore = require('connect-mongo')
 
 mongoose.connect(dbUrl)
