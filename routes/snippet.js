@@ -100,11 +100,13 @@ router.get('/private/edit/:id', WrapAsync(async(req, res)=>{
 router.put('/private/edit/:id', validateSnippet, WrapAsync(async(req, res)=>{
   const {id} = req.params
   req.session.returnTo = null
-  const snippet = await privateSnippet.findByIdAndUpdate(id, req.body)
+  const snippet = await privateSnippet.findById(id)
+  if(!snippet) throw new ExpressError()
 
   if(req.user && snippet.author.equals(req.user._id)){
     try{
-      await Snippet.findByIdAndUpdate(id, req.body)
+      const {title, theme, language, code} = req.body
+      await Snippet.findByIdAndUpdate(id, {title, theme, language, code})
     }catch(e){
       req.flash('error', "Couldn't Update The Snippet")
       res.redirect(`/s/private/edit/${id}`)
@@ -114,7 +116,7 @@ router.put('/private/edit/:id', validateSnippet, WrapAsync(async(req, res)=>{
     throw new ExpressError("Access Denied", 403)
   }
 
-  req.flash('success', "Changes saved!!!")
+  req.flash('success', "Changes Saved.")
   res.redirect(`/s/private/${id}`)
 }))
 
@@ -136,8 +138,10 @@ router.post('/new', isLoggedIn, validateSnippet, WrapAsync(async(req, res)=>{
   try {
     await newSnippet.save()
   }catch(e) {
-    throw new ExpressError("Snippet Couldn't Be Saved :(")
+    throw new ExpressError("Snippet Couldn't Be Saved")
   }
+
+  req.flash('success', "Snippet Created.")
 
   if(req.body.private) return res.redirect(`/s/private/${newSnippet._id}`)
 
@@ -165,7 +169,7 @@ router.post('/:id/save', async(req, res)=>{//user wants to save :)
     return res.status(500).send("Error")
   }
 
-  res.status(200).send('Working')
+  res.status(200).send("Snippet saved")
 })
 router.delete('/:id/save', async(req, res)=>{
   if(!req.user) return res.send("Stop :)")
@@ -191,22 +195,24 @@ router.delete('/:id/save', async(req, res)=>{
 router.put('/edit/:id', validateSnippet, WrapAsync(async(req, res)=>{
   const {id} = req.params
   req.session.returnTo = null
-  const snippet = await Snippet.findByIdAndUpdate(id, req.body)
+
+  const snippet = await Snippet.findById(id)
+
+  if(!snippet) throw new ExpressError()
 
   if(req.user && snippet.author.equals(req.user._id)){
     try{
-      await Snippet.findByIdAndUpdate(id, req.body)
+      const {title, theme, language, code} = req.body
+      await Snippet.findByIdAndUpdate(id, {title, theme, language, code})
     }catch(e){
-      req.flash('error', "Couldn't Update The Snippet")
-      res.redirect(`/s/edit/${id}`)
+      throw new ExpressError()
     }
   }
   else{
-    req.flash('error', "You don't have permissions for that (:")
-    return res.redirect(`/s/${id}`)
+    throw new ExpressError("Unauthorized", 400)
   }
 
-  req.flash('success', "Changes saved!!!")
+  req.flash('success', "Changes Saved.")
   res.redirect(`/s/${id}`)
 }))
 
@@ -230,14 +236,10 @@ const deleteSavers = async(snippet)=>{
 router.delete('/:id', WrapAsync(async(req, res)=>{
   const {id} = req.params
 
-  let snippet
-
-  try{
-    snippet = await Snippet.findById(id)
-  }
-  catch(e){
-    req.flash('success', 'Snippet Deleted!!!')
-    res.redirect('/')
+  const snippet = await Snippet.findById(id)
+  
+  if(!snippet){
+    throw new ExpressError()
   }
 
   if(req.user && snippet.author.equals(req.user._id)){
@@ -267,8 +269,7 @@ router.delete('/:id', WrapAsync(async(req, res)=>{
     }
   }
   else{
-    req.flash('error', "You can't do that!!");
-    return res.redirect(`/s/${id}`)
+    throw new ExpressError("Unauthorized", 400)
   }
 
   req.flash('success', 'Snippet Deleted!!!')

@@ -87,7 +87,6 @@ app.use('/explore', homeRouter)
 app.use('/apis/', apiRouter)
 
 app.get('/', addreturnto, (req, res)=>{//landing page
-  // res.render('error.ejs')
   res.render('home/landing.ejs')
 })
 
