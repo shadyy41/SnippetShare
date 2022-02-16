@@ -100,6 +100,6 @@ app.use((err, req, res, next)=>{//error handler
   res.status(status).render('error.ejs', {err})
 })
 
-app.listen('3000', ()=>{
-  console.log(`App Serving On Port 3000`)
+app.listen(process.env.PORT, ()=>{
+  console.log(`App Serving On Port ${process.env.PORT}`)
 })
